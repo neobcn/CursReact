@@ -5,56 +5,56 @@ import { useState } from "react";
 
 function Crud(){
 
+    const tascaDefault = {id:null,nom:''}
+
     const [falta, setFalta] = useState('')
     const [error, setError] = useState(false)
     const [exit, setExit] = useState(false)
     const [resultat, setResultat] = useState('')
-    const tascaDefault = {id:null,nom:''}
+    
 
     const [modeEdicio, setModeEdicio] = useState(false)    
     const [tasques, setTasques] = useState([])
     const [tasca, setTasca] = useState(tascaDefault)
 
+    console.log({
+        log: 'onload',
+        tasca,
+        bool: ( tasca.nom.trim() === '' )
+    });
 
     const validarFormulari = (e) => {
         e.preventDefault();
+        setExit(false)
 
         if ( tasca.nom.trim() === '' ) {
             setError(true);
             setFalta("El camp tasca no pot estar buit.");
-            console.log('Entra al if error');
-        }
-        console.log({
-            log: 'validarFormulari',
-            tasca,
-            e,
-            error,
-            bool: ( tasca.nom.trim() === '' )
-        });
+        } else {
+            // Si no hi ha error
+            if ( error === false ) {
 
-        // Si no hi ha error
-        if ( error === false ) {
-
-            // Si estem editant
-            if ( modeEdicio ) {
-                setTasques(tasques.map(item => item.id === tasca.id ? tasca : item)) 
-                setResultat("Tasca actualitzada correctament")
+                // Si estem editant
+                if ( modeEdicio ) {
+                    setTasques(tasques.map(item => item.id === tasca.id ? tasca : item)) 
+                    setResultat("Tasca actualitzada correctament")
+                }
+                // Sino, si estem agregant
+                else {
+                    let c = {id: nanoid(), nom: tasca.nom}
+                    setTasques([
+                        ...tasques,
+                        c
+                    ])
+                    // e.target.reset()  
+                    setResultat("Tasca creada correctament")              
+                }
+                // Reiniciem formulari i defaults 
+                setModeEdicio(false)           
+                setTasca(tascaDefault)
+                setExit(true)
             }
-            // Sino, si estem agregant
-            else {
-                let c = {id: nanoid(), nom: tasca.nom}
-                setTasques([
-                    ...tasques,
-                    c
-                ])
-                // e.target.reset()  
-                setResultat("Tasca creada correctament")              
-            }
-            // Reiniciem formulari i defaults 
-            setModeEdicio(false)           
-            setTasca(tascaDefault)
-            setExit(true)
-        }
+        }        
     }
 
     const editarTasca = item => {
@@ -112,13 +112,13 @@ function Crud(){
                     </div>
                     <div className="col-4">
                         <h2>Formulari</h2>
-                        <form onSubmit={validarFormulari}>                            
+                        <form onSubmit={ validarFormulari }>                            
                             <input 
                                 type="text" 
                                 className="form-control mb-2" 
                                 placeholder="Defineix una tasca" 
                                 onClick={reiniciarFormulari} 
-                                onChange={ (e) => setTasca({id:tasca.id, nom:e.target.value}) } 
+                                onChange={ e => setTasca({id:tasca.id, nom:e.target.value}) } 
                                 value={tasca.nom}
                             />
                             

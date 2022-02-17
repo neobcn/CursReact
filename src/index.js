@@ -4,11 +4,13 @@ import './index.css';
 // import App from './App';
 import Crud from './Crud.jsx';
 import reportWebVitals from './reportWebVitals';
+import CrudObj from './CrudObj';
 
 ReactDOM.render(
   <React.StrictMode>
     {/* <App /> */}
-    <Crud />
+    {/* <Crud /> */}
+    <CrudObj />
   </React.StrictMode>,
   document.getElementById('root')
 );

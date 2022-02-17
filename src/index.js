@@ -5,12 +5,14 @@ import './index.css';
 import Crud from './Crud.jsx';
 import reportWebVitals from './reportWebVitals';
 import CrudObj from './CrudObj';
+import Props from './Props';
 
 ReactDOM.render(
   <React.StrictMode>
     {/* <App /> */}
     {/* <Crud /> */}
-    <CrudObj />
+    {/* <CrudObj /> */}
+    <Props />
   </React.StrictMode>,
   document.getElementById('root')
 );

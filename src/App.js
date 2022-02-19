@@ -1,23 +1,47 @@
-import Comptador from "./components/Comptador.jsx";
-import Events from "./components/Events.jsx";
-import Formulari from "./components/Formulari.jsx";
-import Llistes from "./components/Llistes.jsx";
-import Paragraf from "./components/Paragraf.jsx";
-import Variables from "./components/Variables.jsx";
+import React, { lazy, useEffect, useState } from 'react';
+import {nanoid} from 'nanoid';
 
+const importView = subreddit =>
+  lazy(() =>
+    import(`./views/${subreddit}View`).catch(() =>
+      import(`./views/NullView`)
+    )
+  );
 
-function App() {
+const searchSubreddit = async query =>
+  fetch(
+    `https://www.reddit.com/search.json?q=${query}`
+  ).then(_ => _.json());
+
+export default function App({ subredditsToShow }) {
+  const [views, setViews] = useState([]);
+
+  const extractData = response =>
+    response.data.children.map(({ data }) => data);
+
+  useEffect(() => {
+    async function loadViews() {
+      const subredditsToShow = await searchSubreddit(
+        'react hooks'
+      ).then(extractData);
+      const componentPromises = subredditsToShow.map(
+        async data => {
+          const View = await importView(data.subreddit);
+          return (
+            <View key={nanoid()} {...data} />
+          );
+        }
+      );
+
+      Promise.all(componentPromises).then(setViews);
+    }
+
+    loadViews();
+  }, [subredditsToShow]);
+
   return (
-    <div className="container mt-5 mb-50">
-      <h1>Benvinguts al hola món de React amb Salvador Mata</h1>
-      {/*<Paragraf />*/}
-      {/*<Variables />*/}
-      {/*<Events />*/}
-      {/*<Comptador />*/}
-      {/*<Llistes />*/}
-      <Formulari />
-    </div>
+    <React.Suspense fallback='Loading views...'>
+      <div className='container'>{views}</div>
+    </React.Suspense>
   );
 }
-
-export default App;
